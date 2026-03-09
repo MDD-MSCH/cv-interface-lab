@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>X-RAY ANALYSIS | SUBJECT: MS-QA-2026</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --xray-bg: #050508;
+            --xray-dark: #0a0a10;
+            --xray-bone: #e0f7ff;
+            --xray-cyan: #00d4ff;
+            --xray-green: #00ff9d;
+            --xray-amber: #ffaa00;
+            --xray-red: #ff3366;
+            --xray-grid: rgba(0, 212, 255, 0.05);
+            --xray-glow: rgba(0, 212, 255, 0.3);
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--xray-bg);
+            color: var(--xray-bone);
+            font-family: "JetBrains Mono", monospace;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            min-height: 100vh;
+        }
+
+        body {
+            background-image:
+                linear-gradient(var(--xray-grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--xray-grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 212, 255, 0.03) 2px,
+                    rgba(0, 212, 255, 0.03) 4px);
+            pointer-events: none;
+            z-index: 100;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 100px rgba(0, 212, 255, 0.1);
+
+            background:
+                linear-gradient(rgba(5, 5, 8, 0.45), rgba(5, 5, 8, 0.62)),
+                url("../assets/xray-bg.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: var(--xray-bg);
+        }
+
+        .scan-header {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            right: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            color: var(--xray-cyan);
+            opacity: 0.7;
+            z-index: 10;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .scan-id {
+            letter-spacing: 3px;
+        }
+
+        .scan-date {
+            color: var(--xray-green);
+        }
+
+        .anatomy-grid {
+            display: grid;
+            grid-template-columns: 34.5% 65.5%;
+            min-height: 297mm;
+            padding: 80px 40px 60px 40px;
+            gap: 0;
+            position: relative;
+        }
+
+        .skeletal-panel {
+            border-right: 1px solid rgba(0, 255, 157, 0.2);
+            padding-right: 30px;
+            position: relative;
+        }
+
+        .skeletal-panel::before {
+            content: '';
+            position: absolute;
+            right: -1px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg,
+                    transparent,
+                    var(--xray-green) 20%,
+                    var(--xray-green) 80%,
+                    transparent);
+            opacity: 0.5;
+        }
+
+        .cranial-section {
+            text-align: center;
+            margin-bottom: 34px;
+            padding: 24px 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            position: relative;
+        }
+
+        .cranial-section::before,
+        .cranial-section::after {
+            position: absolute;
+            color: var(--xray-cyan);
+            font-size: 8px;
+        }
+
+        .cranial-section::before {
+            top: 10px;
+            left: 10px;
+        }
+
+        .cranial-section::after {
+            bottom: 10px;
+            right: 10px;
+        }
+
+        .subject-stack,
+        .subject-role-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subject-stack {
+            margin-bottom: 12px;
+        }
+
+        .subject-role-stack {
+            margin-bottom: 16px;
+        }
+
+        .subject-chip {
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.28);
+            background: rgba(0, 212, 255, 0.08);
+            color: var(--xray-cyan);
+            box-shadow:
+                0 0 10px rgba(0, 212, 255, 0.10),
+                inset 0 0 8px rgba(0, 212, 255, 0.03);
+        }
+
+        .subject-chip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 212, 255, 0.18),
+                    transparent);
+            animation: pulse 3s infinite;
+        }
+
+        .subject-chip-name {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--xray-bone);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 8px 14px;
+            min-width: 170px;
+            text-shadow: 0 0 14px rgba(224, 247, 255, 0.25);
+        }
+
+        .subject-chip-role {
+            font-size: 9px;
+            color: var(--xray-cyan);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            min-width: 170px;
+        }
+
+        .vital-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .vital-sign {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            align-items: center;
+            gap: 55px;
+            text-align: left;
+        }
+
+        .vital-label {
+            font-size: 12px;
+            color: var(--xray-green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0;
+            margin-left: 5px;
+        }
+
+        .vital-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--xray-bone);
+            line-height: 1.1;
+        }
+
+        .bone-section {
+            margin-bottom: 30px;
+            padding: 20px 14px 20px 20px;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.05), transparent);
+            position: relative;
+        }
+
+        .bone-section::before {
+            content: attr(data-region);
+            position: absolute;
+            top: -8px;
+            left: 15px;
+            background: var(--xray-bg);
+            padding: 0 10px;
+            font-size: 9px;
+            color: var(--xray-green);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .bone-title {
+            font-size: 11px;
+            color: var(--xray-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bone-title::before {
+            content: '';
+            width: 20px;
+            height: 1px;
+            background: var(--xray-cyan);
+            box-shadow: 0 0 10px var(--xray-cyan);
+        }
+
+        .bone-section[data-region="NEURAL"] .bone-title {
+            margin-bottom: 18px;
+        }
+
+        .neural-node {
+            display: grid;
+            grid-template-columns: 34px minmax(0, 1fr);
+            align-items: center;
+            column-gap: 16px;
+            margin-bottom: 12px;
+            padding: 14px 10px 14px 0;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.1), transparent);
+            transition: all 0.3s;
+        }
+
+        .neural-node:hover {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.2), transparent);
+            box-shadow: -5px 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .node-synapse {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--xray-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--xray-cyan);
+            font-size: 15px;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            flex-shrink: 0;
+        }
+
+        .neural-data {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .synapse-label {
+            font-size: 7px;
+            color: var(--xray-green);
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin-bottom: 6px;
+            line-height: 1.35;
+        }
+
+        .synapse-value {
+            font-size: 9px;
+            color: var(--xray-bone);
+            line-height: 1.55;
+            word-break: normal;
+            overflow-wrap: anywhere;
+            hyphens: none;
+        }
+
+        .synapse-value a {
+            color: var(--xray-bone);
+            text-decoration: none;
+            word-break: normal;
+            overflow-wrap: anywhere;
+            hyphens: none;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .synapse-value a:hover {
+            color: var(--xray-cyan);
+        }
+
+        .muscle-fiber {
+            margin-bottom: 20px;
+        }
+
+        .muscle-group {
+            font-size: 9px;
+            color: var(--xray-amber);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .muscle-group::before {
+            content: '▸';
+            color: var(--xray-red);
+        }
+
+        .fiber-strands {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .fiber-tag {
+            font-size: 9px;
+            padding: 5px 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--xray-cyan);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fiber-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .organic-panel {
+            padding-left: 40px;
+        }
+
+        .organ-system {
+            margin-bottom: 35px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: linear-gradient(180deg, rgba(0, 212, 255, 0.03), transparent);
+            position: relative;
+        }
+
+        .organ-system::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    var(--xray-cyan),
+                    var(--xray-green),
+                    transparent);
+            box-shadow: 0 0 20px var(--xray-cyan);
+        }
+
+        .organ-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .organ-icon {
+            font-size: 20px;
+            color: var(--xray-cyan);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+            flex-shrink: 0;
+        }
+
+        .organ-title {
+            flex: 1;
+        }
+
+        .organ-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--xray-bone);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .organ-latin {
+            font-size: 9px;
+            color: var(--xray-green);
+            font-style: italic;
+            margin-top: 3px;
+        }
+
+        .tissue-sample {
+            padding: 20px;
+        }
+
+        .bone-structure {
+            margin-bottom: 25px;
+            padding-left: 20px;
+            border-left: 2px solid rgba(0, 255, 157, 0.3);
+            position: relative;
+        }
+
+        .bone-structure::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 0;
+            width: 2px;
+            height: 30px;
+            background: var(--xray-green);
+            box-shadow: 0 0 10px var(--xray-green);
+        }
+
+        .bone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 14px;
+        }
+
+        .bone-role {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--xray-bone);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(224, 247, 255, 0.3);
+        }
+
+        .bone-location {
+            font-size: 10px;
+            color: var(--xray-cyan);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bone-location::before {
+            content: '◈';
+            color: var(--xray-green);
+        }
+
+        .bone-period {
+            font-size: 9px;
+            color: var(--xray-amber);
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            padding: 4px 12px;
+            font-family: "JetBrains Mono", monospace;
+            white-space: nowrap;
+        }
+
+        .bone-density {
+            list-style: none;
+        }
+
+        .bone-density li {
+            font-size: 10px;
+            color: rgba(224, 247, 255, 0.8);
+            margin-bottom: 6px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .bone-density li::before {
+            content: '~';
+            position: absolute;
+            left: 0;
+            color: var(--xray-cyan);
+            animation: flicker 2s infinite;
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .density-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(0, 212, 255, 0.2);
+        }
+
+        .density-label {
+            font-size: 8px;
+            color: var(--xray-green);
+            text-transform: uppercase;
+        }
+
+        .density-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(0, 212, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .density-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--xray-cyan), var(--xray-green));
+            box-shadow: 0 0 10px var(--xray-cyan);
+            position: relative;
+        }
+
+        .density-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 20px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-20px);
+            }
+
+            100% {
+                transform: translateX(20px);
+            }
+        }
+
+        .implant-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .implant-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.05), transparent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .implant-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--xray-green);
+            box-shadow: 0 0 15px var(--xray-green);
+        }
+
+        .implant-id {
+            font-size: 9px;
+            color: var(--xray-amber);
+            font-family: "JetBrains Mono", monospace;
+            min-width: 60px;
+        }
+
+        .implant-name {
+            flex: 1;
+            font-size: 11px;
+            color: var(--xray-bone);
+            font-weight: 500;
+        }
+
+        .implant-source {
+            font-size: 9px;
+            color: var(--xray-cyan);
+            text-align: right;
+        }
+
+        .ekg-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            right: 40px;
+            height: 40px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ekg-line {
+            flex: 1;
+            height: 30px;
+            position: relative;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .ekg-line::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    var(--xray-cyan) 10%,
+                    var(--xray-cyan) 90%,
+                    transparent);
+        }
+
+        .ekg-pulse {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            transform: translateY(-50%);
+        }
+
+        .ekg-pulse path {
+            fill: none;
+            stroke: var(--xray-green);
+            stroke-width: 2;
+            filter: drop-shadow(0 0 5px var(--xray-green));
+            animation: heartbeat 2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                stroke-dasharray: 0 1000;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                stroke-dasharray: 1000 0;
+                opacity: 0;
+            }
+        }
+
+        .ekg-label {
+            font-size: 8px;
+            color: var(--xray-green);
+            letter-spacing: 2px;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+
+            html,
+            body {
+                background: var(--xray-bg);
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            body::before {
+                display: none;
+            }
+
+            .page {
+                box-shadow: none;
+                border: 1px solid rgba(0, 212, 255, 0.2);
+            }
+
+            .fiber-tag::before,
+            .subject-chip::before {
+                animation: none;
+            }
+
+            .bone-density li::before {
+                animation: none;
+            }
+
+            .density-fill::after {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="scan-header">
+            <div class="scan-id">◈ X-RAY ID: QA-2026-MS-001</div>
+            <div class="scan-date">SCAN DATE: 2026-03-08</div>
+            <div class="scan-id">TECH: X-RAY-SYS-v3.1</div>
+        </div>
+
+        <div class="anatomy-grid">
+            <aside class="skeletal-panel">
+                <div class="cranial-section">
+                    <div class="subject-stack">
+                        <span class="subject-chip subject-chip-name">MICHAEL</span>
+                        <span class="subject-chip subject-chip-name">SCHUBERT</span>
+                    </div>
+
+                    <div class="subject-role-stack">
+                        <span class="subject-chip subject-chip-role">QA Engineer</span>
+                        <span class="subject-chip subject-chip-role">Software Testing</span>
+                        <span class="subject-chip subject-chip-role">Quality Assurance</span>
+                    </div>
+
+                    <div class="vital-row">
+                        <div class="vital-sign">
+                            <div class="vital-label">EXP:</div>
+                            <div class="vital-value">8+ YRS</div>
+                        </div>
+                        <div class="vital-sign">
+                            <div class="vital-label">STATUS:</div>
+                            <div class="vital-value" style="color: var(--xray-green);">ACTIVE</div>
+                        </div>
+                        <div class="vital-sign">
+                            <div class="vital-label">LOC:</div>
+                            <div class="vital-value">BERLIN</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bone-section" data-region="NEURAL">
+                    <div class="bone-title">Neural Pathways</div>
+
+                    <div class="neural-node">
+                        <div class="node-synapse"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="neural-data">
+                            <div class="synapse-label">Primary Synapse</div>
+                            <div class="synapse-value">
+                                <a href="mailto:herr.michael.schubert@gmail.com">
+                                    herr.michael.schubert@gmail.com
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="neural-node">
+                        <div class="node-synapse"><i class="fa-brands fa-linkedin"></i></div>
+                        <div class="neural-data">
+                            <div class="synapse-label">Professional Network</div>
+                            <div class="synapse-value">
+                                <a href="https://www.linkedin.com/in/michael-schubert-55548b198/" target="_blank"
+                                    rel="noopener noreferrer">
+                                    linkedin.com/in/michael-schubert
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bone-section" data-region="MUSCLE">
+                    <div class="bone-title">Muscle Fibers</div>
+
+                    <div class="muscle-fiber">
+                        <div class="muscle-group">Testing Core</div>
+                        <div class="fiber-strands">
+                            <span class="fiber-tag">Manual Testing</span>
+                            <span class="fiber-tag">Regression</span>
+                            <span class="fiber-tag">Functional</span>
+                            <span class="fiber-tag">System</span>
+                            <span class="fiber-tag">Test Design</span>
+                        </div>
+                    </div>
+
+                    <div class="muscle-fiber">
+                        <div class="muscle-group">Automation Layer</div>
+                        <div class="fiber-strands">
+                            <span class="fiber-tag">Selenium</span>
+                            <span class="fiber-tag">JUnit</span>
+                            <span class="fiber-tag">API Testing</span>
+                            <span class="fiber-tag">REST</span>
+                            <span class="fiber-tag">SQL</span>
+                        </div>
+                    </div>
+
+                    <div class="muscle-fiber">
+                        <div class="muscle-group">Debug Matrix</div>
+                        <div class="fiber-strands">
+                            <span class="fiber-tag">Bug Repro</span>
+                            <span class="fiber-tag">RCA</span>
+                            <span class="fiber-tag">Prod Analysis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bone-section" data-region="LINGUAL">
+                    <div class="bone-title">Linguistic Capacity</div>
+                    <div class="fiber-strands">
+                        <span class="fiber-tag">German [NATIVE]</span>
+                        <span class="fiber-tag">English [FLUENT]</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="organic-panel">
+                <div class="organ-system">
+                    <div class="organ-header">
+                        <div class="organ-icon"><i class="fa-solid fa-brain"></i></div>
+                        <div class="organ-title">
+                            <div class="organ-name">Cerebral Cortex</div>
+                            <div class="organ-latin">Cortex Cerebri • System Overview</div>
+                        </div>
+                    </div>
+                    <div class="tissue-sample">
+                        <p
+                            style="font-size: 11px; line-height: 1.8; color: rgba(224, 247, 255, 0.9); margin-bottom: 20px;">
+                            Quality Assurance Engineer with <strong
+                                style="color: var(--xray-cyan); text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);">8+
+                                years</strong> ensuring reliability and performance of web and enterprise applications.
+                            Specialized in manual testing, regression testing, defect analysis, and validation across
+                            full development lifecycle. Background in software development with hands-on experience in
+                            Selenium-based automation, API testing, and structured issue analysis.
+                        </p>
+                        <div class="density-indicator">
+                            <span class="density-label">System Integrity</span>
+                            <div class="density-bar">
+                                <div class="density-fill" style="width: 94%;"></div>
+                            </div>
+                            <span style="font-size: 10px; color: var(--xray-green);">94%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="organ-system">
+                    <div class="organ-header">
+                        <div class="organ-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <div class="organ-title">
+                            <div class="organ-name">Cardiac History</div>
+                            <div class="organ-latin">Historia Cordis • Operational Timeline</div>
+                        </div>
+                    </div>
+                    <div class="tissue-sample">
+
+                        <div class="bone-structure">
+                            <div class="bone-header">
+                                <div>
+                                    <div class="bone-role">Software Engineer</div>
+                                    <div class="bone-role">(Quality Focus)</div>
+                                    <div class="bone-location">adesso SE, Berlin</div>
+                                </div>
+                                <div class="bone-period">06/2022 – 01/2025</div>
+                            </div>
+                            <ul class="bone-density">
+                                <li>Ensured software quality in complex client projects</li>
+                                <li>Reproduced and analyzed critical production issues</li>
+                                <li>Conducted integration and system testing</li>
+                                <li>Validated functional requirements before release</li>
+                            </ul>
+                            <div class="density-indicator">
+                                <span class="density-label">Density</span>
+                                <div class="density-bar">
+                                    <div class="density-fill" style="width: 95%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bone-structure">
+                            <div class="bone-header">
+                                <div>
+                                    <div class="bone-role">Software Engineer</div>
+                                    <div class="bone-role">(Quality &amp; System Analysis)</div>
+                                    <div class="bone-location">Das Büro am Draht, Berlin</div>
+                                </div>
+                                <div class="bone-period">09/2021 – 05/2022</div>
+                            </div>
+                            <ul class="bone-density">
+                                <li>Analyzed and stabilized existing software systems</li>
+                                <li>Identified defects and supported problem resolution</li>
+                                <li>Improved maintainability and reliability</li>
+                            </ul>
+                        </div>
+
+                        <div class="bone-structure">
+                            <div class="bone-header">
+                                <div>
+                                    <div class="bone-role">Software Developer</div>
+                                    <div class="bone-role">(Testing &amp; QA Focus)</div>
+                                    <div class="bone-location">ELO Digital Office GmbH, Stuttgart</div>
+                                </div>
+                                <div class="bone-period">08/2018 – 08/2021</div>
+                            </div>
+                            <ul class="bone-density">
+                                <li>Created structured test cases</li>
+                                <li>Executed regression test cycles</li>
+                                <li>Investigated software defects</li>
+                            </ul>
+                        </div>
+
+                        <div class="bone-structure">
+                            <div class="bone-header">
+                                <div>
+                                    <div class="bone-role">Junior Software Engineer</div>
+                                    <div class="bone-location">Wünsch AG, Stuttgart</div>
+                                </div>
+                                <div class="bone-period">03/2017 – 07/2018</div>
+                            </div>
+                            <ul class="bone-density">
+                                <li>Ensured stability of software components</li>
+                                <li>Performed API and interface validation</li>
+                            </ul>
+                        </div>
+
+                        <div class="bone-structure">
+                            <div class="bone-header">
+                                <div>
+                                    <div class="bone-role">QA / Test Automation Engineer</div>
+                                    <div class="bone-location">CYBERTRAP, Berlin</div>
+                                </div>
+                                <div class="bone-period">08/2015 – 02/2016</div>
+                            </div>
+                            <ul class="bone-density">
+                                <li>Developed automated tests using Selenium and JUnit</li>
+                                <li>Designed performance tests in Python</li>
+                            </ul>
+                        </div>
+
+                        <div class="bone-structure">
+                            <div class="bone-header">
+                                <div>
+                                    <div class="bone-role">1st Level Support</div>
+                                    <div class="bone-location">STRATO AG, Berlin</div>
+                                </div>
+                                <div class="bone-period">07/2014 – 05/2015</div>
+                            </div>
+                            <ul class="bone-density">
+                                <li>Reproduced technical customer issues</li>
+                                <li>Documented defects in ticketing systems</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="organ-system">
+                    <div class="organ-header">
+                        <div class="organ-icon"><i class="fa-solid fa-award"></i></div>
+                        <div class="organ-title">
+                            <div class="organ-name">Synthetic Implants</div>
+                            <div class="organ-latin">Implantata Certificata • Accreditations</div>
+                        </div>
+                    </div>
+                    <div class="tissue-sample">
+                        <div class="implant-grid">
+                            <div class="implant-item">
+                                <div class="implant-id">IMP-001</div>
+                                <div class="implant-name">Oracle Certified Associate (OCAJP) – Java SE 7</div>
+                                <div class="implant-source">Oracle Corp.</div>
+                            </div>
+                            <div class="implant-item">
+                                <div class="implant-id">IMP-002</div>
+                                <div class="implant-name">Java Programmer Certification</div>
+                                <div class="implant-source">Hamburger Akademie</div>
+                            </div>
+                            <div class="implant-item">
+                                <div class="implant-id">IMP-003</div>
+                                <div class="implant-name">IT Systems Electronics Technician</div>
+                                <div class="implant-source">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="ekg-footer">
+            <div class="ekg-label">◈ VITAL SIGNS NORMAL</div>
+            <div class="ekg-line">
+                <svg class="ekg-pulse" viewBox="0 0 300 30" preserveAspectRatio="none">
+                    <path d="M0,15 L50,15 L60,5 L70,25 L80,15 L300,15" />
+                </svg>
+            </div>
+            <div class="ekg-label">RHYTHM: REGULAR ◈</div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Michael Schubert - CV | Heatmap Edition</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Heatmap Color Palette */
+      --heat-cold: #0a1628;
+      --heat-cool: #1e3a5f;
+      --heat-teal: #0891b2;
+      --heat-green: #10b981;
+      --heat-yellow: #f59e0b;
+      --heat-orange: #f97316;
+      --heat-red: #ef4444;
+      --heat-hot: #dc2626;
+
+      /* Gradients */
+      --gradient-sidebar: linear-gradient(180deg, var(--heat-cold) 0%, var(--heat-cool) 30%, var(--heat-teal) 70%, var(--heat-green) 100%);
+      --gradient-accent: linear-gradient(90deg, var(--heat-teal), var(--heat-yellow), var(--heat-orange));
+      --gradient-hot: linear-gradient(135deg, var(--heat-orange), var(--heat-red), var(--heat-hot));
+      --gradient-cool: linear-gradient(135deg, var(--heat-cool), var(--heat-teal));
+
+      --text-light: #f8fafc;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0a0f1a;
+      color: var(--text-dark);
+      font-family: "Inter", sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      line-height: 1.4;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #0a0f1a;
+      box-shadow: 0 0 60px rgba(249, 115, 22, 0.15);
+    }
+
+    .cv-wrapper {
+      display: grid;
+      grid-template-columns: 30% 70%;
+      min-height: 297mm;
+    }
+
+    /* SIDEBAR - Heatmap Gradient */
+    .sidebar {
+      background: var(--gradient-sidebar);
+      color: var(--text-light);
+      padding: 32px 20px 24px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 0% 100%, rgba(8, 145, 178, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .header-section {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid transparent;
+      border-image: var(--gradient-accent) 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .name {
+      font-family: "Inter", sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--heat-yellow);
+      line-height: 1.5;
+      letter-spacing: 1.5px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .location {
+      font-size: 11px;
+      line-height: 1.5;
+      color: rgba(248, 250, 252, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-heading {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--heat-yellow);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .contact-icon {
+      width: 22px;
+      min-width: 22px;
+      text-align: center;
+      color: var(--heat-teal);
+      font-size: 13px;
+      line-height: 1.3;
+      margin-top: 2px;
+    }
+
+    .contact-value,
+    .contact-value a {
+      font-size: 10.5px;
+      line-height: 1.4;
+      color: rgba(248, 250, 252, 0.9);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .contact-value a:hover {
+      color: var(--heat-yellow);
+    }
+
+    .skill-category {
+      margin-bottom: 16px;
+    }
+
+    .skill-category-title {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--heat-teal);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Heatmap-colored skill tags */
+    .skill-tag {
+      font-size: 9px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.25s ease;
+      cursor: default;
+    }
+
+    .skill-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Category-specific heat colors */
+    .tag-testing {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(239, 68, 68, 0.2));
+      color: #fdba74;
+      border-color: rgba(249, 115, 22, 0.4);
+    }
+
+    .tag-testing:hover {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.4), rgba(239, 68, 68, 0.35));
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+    }
+
+    .tag-automation {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(220, 38, 38, 0.2));
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .tag-automation:hover {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(220, 38, 38, 0.35));
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .tag-debugging {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(249, 115, 22, 0.2));
+      color: #fcd34d;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .tag-debugging:hover {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), rgba(249, 115, 22, 0.35));
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .tag-tools {
+      background: linear-gradient(135deg, rgba(8, 145, 178, 0.25), rgba(16, 185, 129, 0.2));
+      color: #67e8f9;
+      border-color: rgba(8, 145, 178, 0.4);
+    }
+
+    .tag-tools:hover {
+      background: linear-gradient(135deg, rgba(8, 145, 178, 0.4), rgba(16, 185, 129, 0.35));
+      box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+    }
+
+    .language-item {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: rgba(8, 145, 178, 0.1);
+      border-radius: 6px;
+      border-left: 3px solid var(--heat-teal);
+    }
+
+    .language-name {
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 3px;
+      color: var(--text-light);
+    }
+
+    .language-level {
+      font-size: 10px;
+      color: var(--heat-teal);
+    }
+
+    .references-text {
+      font-size: 10px;
+      color: rgba(248, 250, 252, 0.6);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      padding: 32px 28px 24px 28px;
+      background: #0d1117;
+      position: relative;
+    }
+
+    .main-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-hot);
+    }
+
+    .about-section {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(30, 58, 95, 0.3), rgba(8, 145, 178, 0.1));
+      border-radius: 8px;
+      border: 1px solid rgba(8, 145, 178, 0.2);
+    }
+
+    .about-heading {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .about-text {
+      font-size: 11.5px;
+      line-height: 1.6;
+      color: #94a3b8;
+    }
+
+    .content-section {
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--text-light);
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid transparent;
+      border-image: var(--gradient-hot) 1;
+      display: inline-block;
+    }
+
+    .experience-item {
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+      border-left: 4px solid;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .experience-item:hover {
+      transform: translateX(4px);
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    /* Heat-intensity borders by recency */
+    .experience-item:nth-child(1) {
+      border-left-color: var(--heat-red);
+      box-shadow: -4px 0 20px rgba(239, 68, 68, 0.15);
+    }
+
+    .experience-item:nth-child(2) {
+      border-left-color: var(--heat-orange);
+      box-shadow: -4px 0 20px rgba(249, 115, 22, 0.12);
+    }
+
+    .experience-item:nth-child(3) {
+      border-left-color: var(--heat-yellow);
+      box-shadow: -4px 0 20px rgba(245, 158, 11, 0.1);
+    }
+
+    .experience-item:nth-child(4) {
+      border-left-color: var(--heat-teal);
+      box-shadow: -4px 0 20px rgba(8, 145, 178, 0.1);
+    }
+
+    .experience-item:nth-child(5) {
+      border-left-color: var(--heat-cool);
+      box-shadow: -4px 0 20px rgba(30, 58, 95, 0.1);
+    }
+
+    .experience-item:nth-child(6) {
+      border-left-color: var(--heat-cool);
+      box-shadow: -4px 0 20px rgba(30, 58, 95, 0.1);
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .exp-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .exp-role {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-light);
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .exp-company {
+      font-size: 11px;
+      color: var(--heat-teal);
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exp-company::before {
+      content: '▸';
+      color: var(--heat-orange);
+    }
+
+    .exp-date {
+      font-size: 10px;
+      color: var(--heat-yellow);
+      font-family: "JetBrains Mono", monospace;
+      white-space: nowrap;
+      line-height: 1.4;
+      padding: 4px 10px;
+      background: rgba(245, 158, 11, 0.1);
+      border-radius: 4px;
+    }
+
+    .exp-description ul {
+      list-style: none;
+    }
+
+    .exp-description li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 5px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: #94a3b8;
+    }
+
+    .exp-description li:last-child {
+      margin-bottom: 0;
+    }
+
+    .exp-description li::before {
+      content: "▪";
+      position: absolute;
+      left: 0;
+      color: var(--heat-orange);
+      font-size: 12px;
+    }
+
+    .education-item {
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      background: rgba(30, 58, 95, 0.2);
+      border-radius: 6px;
+      border-left: 3px solid var(--heat-teal);
+      transition: all 0.2s;
+    }
+
+    .education-item:hover {
+      background: rgba(30, 58, 95, 0.35);
+      border-left-color: var(--heat-yellow);
+    }
+
+    .education-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .edu-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-light);
+      line-height: 1.4;
+      margin-bottom: 3px;
+    }
+
+    .edu-institution {
+      font-size: 10px;
+      color: var(--heat-teal);
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    /* Heat intensity indicator dots */
+    .heat-indicator {
+      display: inline-flex;
+      gap: 3px;
+      margin-left: 8px;
+    }
+
+    .heat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .heat-dot.hot {
+      background: var(--heat-red);
+      box-shadow: 0 0 6px var(--heat-red);
+    }
+
+    .heat-dot.warm {
+      background: var(--heat-orange);
+    }
+
+    .heat-dot.mild {
+      background: var(--heat-yellow);
+    }
+
+    .heat-dot.cool {
+      background: var(--heat-teal);
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+
+      html,
+      body {
+        width: 210mm;
+        height: 297mm;
+        background: #0a0f1a;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .page {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        box-shadow: none;
+        overflow: hidden;
+      }
+
+      .cv-wrapper {
+        min-height: 297mm;
+        height: 297mm;
+      }
+
+      .skill-tag:hover,
+      .experience-item:hover,
+      .education-item:hover {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="cv-wrapper">
+      <aside class="sidebar">
+        <div class="header-section">
+          <h1 class="name">Michael<br />Schubert</h1>
+
+          <div class="title">
+            <div>QA Engineer</div>
+            <div>Software Testing</div>
+            <div>Quality Assurance</div>
+          </div>
+
+          <div class="location">
+            <div>📍 Berlin, Germany</div>
+            <div>🌐 Open to 100% Remote</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-heading">/// Contact</div>
+
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="contact-value">
+              <a href="mailto:herr.michael.schubert@gmail.com">herr.michael.schubert@gmail.com</a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fa-brands fa-linkedin"></i>
+            </div>
+            <div class="contact-value">
+              <a href="https://www.linkedin.com/in/michael-schubert-55548b198/"
+                target="_blank">linkedin.com/in/michael-schubert</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-heading">/// Competences</div>
+
+          <div class="skill-category">
+            <div class="skill-category-title">Testing
+              <span class="heat-indicator">
+                <span class="heat-dot hot"></span>
+                <span class="heat-dot hot"></span>
+                <span class="heat-dot hot"></span>
+              </span>
+            </div>
+            <div class="skill-list">
+              <span class="skill-tag tag-testing">Manual Testing</span>
+              <span class="skill-tag tag-testing">Regression Testing</span>
+              <span class="skill-tag tag-testing">Functional Testing</span>
+              <span class="skill-tag tag-testing">Integration Testing</span>
+              <span class="skill-tag tag-testing">System Testing</span>
+              <span class="skill-tag tag-testing">Test Case Design</span>
+            </div>
+          </div>
+
+          <div class="skill-category">
+            <div class="skill-category-title">Automation
+              <span class="heat-indicator">
+                <span class="heat-dot hot"></span>
+                <span class="heat-dot hot"></span>
+                <span class="heat-dot warm"></span>
+              </span>
+            </div>
+            <div class="skill-list">
+              <span class="skill-tag tag-automation">Selenium</span>
+              <span class="skill-tag tag-automation">JUnit</span>
+              <span class="skill-tag tag-automation">API Testing</span>
+              <span class="skill-tag tag-automation">REST / JSON</span>
+              <span class="skill-tag tag-automation">SQL Basics</span>
+            </div>
+          </div>
+
+          <div class="skill-category">
+            <div class="skill-category-title">Debugging
+              <span class="heat-indicator">
+                <span class="heat-dot warm"></span>
+                <span class="heat-dot warm"></span>
+                <span class="heat-dot mild"></span>
+              </span>
+            </div>
+            <div class="skill-list">
+              <span class="skill-tag tag-debugging">Bug Reproduction</span>
+              <span class="skill-tag tag-debugging">Root Cause Analysis</span>
+              <span class="skill-tag tag-debugging">Production Issue Analysis</span>
+            </div>
+          </div>
+
+          <div class="skill-category">
+            <div class="skill-category-title">Tools
+              <span class="heat-indicator">
+                <span class="heat-dot cool"></span>
+                <span class="heat-dot cool"></span>
+                <span class="heat-dot cool"></span>
+              </span>
+            </div>
+            <div class="skill-list">
+              <span class="skill-tag tag-tools">Jira</span>
+              <span class="skill-tag tag-tools">Confluence</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-heading">/// Languages</div>
+
+          <div class="language-item">
+            <div class="language-name">German</div>
+            <div class="language-level">Native ████████░░</div>
+          </div>
+
+          <div class="language-item">
+            <div class="language-name">English</div>
+            <div class="language-level">Fluent ███████░░░</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-heading">/// References</div>
+          <div class="references-text">Available upon request.</div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <section class="about-section">
+          <div class="about-heading">/// About Me</div>
+          <p class="about-text">
+            Quality Assurance Engineer with <strong style="color: var(--heat-yellow);">8+ years</strong> of experience
+            ensuring reliability and performance of web and enterprise applications. Experienced in manual and
+            regression testing, defect analysis, and validating complex software systems throughout the development
+            lifecycle. With a background in software development and hands-on experience in Selenium-based test
+            automation and API testing, I bridge the gap between development and quality assurance to help teams deliver
+            stable and high-quality products.
+          </p>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-title">/// Work Experience</h2>
+
+          <div class="experience-item">
+            <div class="exp-header">
+              <div class="exp-main">
+                <div class="exp-role">Software Engineer (Quality Focus)</div>
+                <div class="exp-company">adesso SE, Berlin</div>
+              </div>
+              <div class="exp-date">06/2022 – 01/2025</div>
+            </div>
+            <div class="exp-description">
+              <ul>
+                <li>Ensured software quality in complex client projects</li>
+                <li>Reproduced and analyzed critical production issues</li>
+                <li>Conducted integration and system testing</li>
+                <li>Validated functional requirements before release</li>
+                <li>Improved stability of existing applications</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <div class="exp-header">
+              <div class="exp-main">
+                <div class="exp-role">Software Engineer (Quality & System Analysis)</div>
+                <div class="exp-company">Das Büro am Draht, Berlin</div>
+              </div>
+              <div class="exp-date">09/2021 – 05/2022</div>
+            </div>
+            <div class="exp-description">
+              <ul>
+                <li>Analyzed and stabilized existing software systems</li>
+                <li>Identified defects and supported structured problem resolution</li>
+                <li>Assisted in functional testing and validation</li>
+                <li>Improved maintainability and reliability</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <div class="exp-header">
+              <div class="exp-main">
+                <div class="exp-role">Software Developer (Testing & QA Focus)</div>
+                <div class="exp-company">ELO Digital Office GmbH</div>
+              </div>
+              <div class="exp-date">08/2018 – 08/2021</div>
+            </div>
+            <div class="exp-description">
+              <ul>
+                <li>Created structured test cases</li>
+                <li>Executed regression test cycles</li>
+                <li>Investigated software defects</li>
+                <li>Validated new modules and features</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <div class="exp-header">
+              <div class="exp-main">
+                <div class="exp-role">Junior Software Engineer</div>
+                <div class="exp-company">Wünsch AG</div>
+              </div>
+              <div class="exp-date">03/2017 – 07/2018</div>
+            </div>
+            <div class="exp-description">
+              <ul>
+                <li>Ensured stability of software components</li>
+                <li>Performed API and interface validation</li>
+                <li>Collaborated with development teams</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <div class="exp-header">
+              <div class="exp-main">
+                <div class="exp-role">QA / Test Automation Engineer</div>
+                <div class="exp-company">CYBERTRAP</div>
+              </div>
+              <div class="exp-date">08/2015 – 02/2016</div>
+            </div>
+            <div class="exp-description">
+              <ul>
+                <li>Developed automated tests using Selenium and JUnit (Java)</li>
+                <li>Designed and analyzed performance tests in Python</li>
+                <li>Investigated and reproduced complex software defects</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="experience-item">
+            <div class="exp-header">
+              <div class="exp-main">
+                <div class="exp-role">1st Level Support</div>
+                <div class="exp-company">STRATO AG</div>
+              </div>
+              <div class="exp-date">03/2014 – 05/2015</div>
+            </div>
+            <div class="exp-description">
+              <ul>
+                <li>Reproduced technical customer issues</li>
+                <li>Documented defects in ticketing systems</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section">
+          <h2 class="section-title">/// Education</h2>
+
+          <div class="education-item">
+            <div class="edu-title">Oracle Certified Associate (OCAJP) – Java SE 7</div>
+            <div class="edu-institution">Oracle Certification</div>
+          </div>
+
+          <div class="education-item">
+            <div class="edu-title">Java Programmer Certification</div>
+            <div class="edu-institution">Hamburger Akademie</div>
+          </div>
+
+          <div class="education-item">
+            <div class="edu-title">IT Systems Electronics Technician</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CV Interface Lab</title>
+
+    <style>
+        body {
+            background: #07090d;
+            color: #e6faff;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 60px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 42px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            opacity: 0.7;
+            max-width: 600px;
+            margin: 0 auto 60px auto;
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .card {
+            background: #0e1117;
+            border: 1px solid #1c2330;
+            border-radius: 10px;
+            padding: 25px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #00d4ff;
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.25);
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        .card h2 {
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .card p {
+            font-size: 14px;
+            opacity: 0.75;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .card a {
+            display: inline-block;
+            padding: 10px 18px;
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            transition: 0.25s;
+        }
+
+        .card a:hover {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        .footer {
+            margin-top: 80px;
+            opacity: 0.5;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CV Interface Lab</h1>
+
+    <div class="subtitle">
+        A series of experimental resume interfaces exploring alternative ways to present technical profiles.
+        Each design visualizes professional experience using different interface metaphors.
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <img src="../assets/xray-preview.jpeg">
+            <h2>X-Ray CV</h2>
+            <p>
+                Diagnostic style interface presenting a CV as a system scan inspired by medical imaging.
+            </p>
+            <a href="x-ray-cv/">Open CV</a>
+        </div>
+
+        <div class="card">
+            <img src="../assets/heatmap-preview.jpeg">
+            <h2>Heatmap CV</h2>
+            <p>
+                Skill and experience visualization using heatmap inspired interface elements.
+            </p>
+            <a href="heatmap-cv/">Open CV</a>
+        </div>
+
+        <div class="card">
+            <img src="../assets/blueprint-preview.jpeg">
+            <h2>Blueprint CV</h2>
+            <p>
+                Technical blueprint inspired layout representing professional experience as system schematics.
+            </p>
+            <a href="blueprint-cv/">Open CV</a>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Michael Schubert • QA Engineer
+    </div>
+
+</body>
+
+</html>

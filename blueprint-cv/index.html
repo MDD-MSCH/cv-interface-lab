@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TECHNICAL SPECIFICATION | MS-QA-2025</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    } 
+
+    :root {
+      --blueprint-bg: #002b5c;
+      --blueprint-paper: #003d82;
+      --blueprint-line: #0066cc;
+      --blueprint-cyan: #00d4ff;
+      --blueprint-white: #e8f4f8;
+      --blueprint-grid: rgba(0, 212, 255, 0.08);
+      --blueprint-accent: #ff6b35;
+      --dimension: #7dd3fc;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--blueprint-bg);
+      color: var(--blueprint-white);
+      font-family: "JetBrains Mono", monospace;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      overflow-x: hidden;
+    }
+
+    body {
+      line-height: 1.4;
+      background-image:
+        linear-gradient(var(--blueprint-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--blueprint-grid) 1px, transparent 1px);
+      background-size: 20px 20px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+      background-size: 100px 100px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .screen-only {
+      display: block;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: var(--blueprint-bg);
+      position: relative;
+      box-shadow: 0 0 0 1px var(--blueprint-line), 0 0 60px rgba(0, 102, 204, 0.3);
+    }
+
+    .corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--blueprint-cyan);
+      z-index: 10;
+    }
+
+    .corner-tl {
+      top: 20px;
+      left: 20px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .corner-tr {
+      top: 20px;
+      right: 20px;
+      border-left: none;
+      border-bottom: none;
+    }
+
+    .corner-bl {
+      bottom: 20px;
+      left: 20px;
+      border-right: none;
+      border-top: none;
+    }
+
+    .corner-br {
+      bottom: 20px;
+      right: 20px;
+      border-left: none;
+      border-top: none;
+    }
+
+    .dimension-line {
+      position: absolute;
+      background: var(--dimension);
+      z-index: 5;
+    }
+
+    .dim-h {
+      height: 1px;
+      left: 60px;
+      right: 60px;
+    }
+
+    .dim-v {
+      width: 1px;
+      top: 60px;
+      bottom: 60px;
+    }
+
+    .dim-top {
+      top: 40px;
+    }
+
+    .dim-bottom {
+      bottom: 40px;
+    }
+
+    .dim-left {
+      left: 40px;
+    }
+
+    .dim-right {
+      right: 40px;
+    }
+
+    .dimension-line::after,
+    .dimension-line::before {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--dimension);
+    }
+
+    .dim-h::before {
+      left: -4px;
+      top: -4px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .dim-h::after {
+      right: -4px;
+      top: -4px;
+      border-left: none;
+      border-bottom: none;
+    }
+
+    .dim-v::before {
+      left: -4px;
+      top: -4px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .dim-v::after {
+      left: -4px;
+      bottom: -4px;
+      border-right: none;
+      border-top: none;
+    }
+
+    .spec-header {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      color: var(--dimension);
+      letter-spacing: 3px;
+      background: var(--blueprint-bg);
+      padding: 0 20px;
+      border: 1px solid var(--blueprint-line);
+      z-index: 10;
+    }
+
+    .blueprint-grid {
+      display: grid;
+      grid-template-columns: 35% 65%;
+      min-height: 297mm;
+      padding: 60px 50px 50px 50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .left-panel {
+      border-right: 2px solid var(--blueprint-line);
+      padding-right: 30px;
+      position: relative;
+    }
+
+    .left-panel::before {
+      content: 'SECTION A-A';
+      position: absolute;
+      top: 50%;
+      left: -35px;
+      transform: rotate(-90deg) translateX(50%);
+      font-size: 10px;
+      color: var(--dimension);
+      letter-spacing: 4px;
+      transform-origin: center;
+    }
+
+    .title-block {
+      border: 2px solid var(--blueprint-cyan);
+      padding: 20px;
+      margin-bottom: 30px;
+      position: relative;
+      background: rgba(0, 102, 204, 0.1);
+    }
+
+    .title-block::before {
+      content: '◈ SPEC-ID: MS-QA-2026';
+      position: absolute;
+      top: -10px;
+      left: 15px;
+      background: var(--blueprint-bg);
+      padding: 0 10px;
+      font-size: 9px;
+      color: var(--blueprint-cyan);
+      font-weight: 600;
+    }
+
+    .blueprint-name {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--blueprint-white);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .blueprint-id {
+      font-size: 11px;
+      color: var(--blueprint-cyan);
+      letter-spacing: 4px;
+      margin-bottom: 15px;
+      border-bottom: 1px dashed var(--blueprint-line);
+      padding-bottom: 10px;
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      margin-bottom: 6px;
+      color: var(--dimension);
+    }
+
+    .spec-label {
+      color: var(--dimension);
+    }
+
+    .spec-value {
+      color: var(--blueprint-white);
+      font-weight: 500;
+    }
+
+    .data-section {
+      margin-bottom: 25px;
+      border: 1px solid var(--blueprint-line);
+      position: relative;
+    }
+
+    .data-header {
+      background: var(--blueprint-line);
+      color: var(--blueprint-bg);
+      font-size: 10px;
+      padding: 6px 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .data-header::before {
+      content: '▸';
+      color: var(--blueprint-cyan);
+    }
+
+    .data-content {
+      padding: 12px;
+    }
+
+    .contact-node {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 10px;
+      border: 1px dashed var(--blueprint-line);
+      position: relative;
+    }
+
+    .contact-node::before {
+      content: attr(data-index);
+      position: absolute;
+      left: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 8px;
+      color: var(--dimension);
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--dimension);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .node-icon {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--blueprint-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blueprint-cyan);
+      font-size: 11px;
+    }
+
+    .node-data {
+      flex: 1;
+    }
+
+    .node-label {
+      font-size: 8px;
+      color: var(--dimension);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+
+    .node-value {
+      font-size: 10px;
+      color: var(--blueprint-white);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      line-height: 1.45;
+    }
+
+    .node-value a {
+      color: var(--blueprint-white);
+      text-decoration: none;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .node-value a:hover,
+    .node-value a:focus,
+    .node-value a:visited {
+      color: var(--blueprint-cyan);
+      text-decoration: none;
+    }
+
+    .component-list {
+      list-style: none;
+    }
+
+    .component-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dotted var(--blueprint-line);
+      font-size: 10px;
+    }
+
+    .component-item:last-child {
+      border-bottom: none;
+    }
+
+    .component-code {
+      color: var(--blueprint-cyan);
+      font-weight: 600;
+    }
+
+    .component-name {
+      color: var(--blueprint-white);
+    }
+
+    .component-spec {
+      color: var(--dimension);
+      font-size: 9px;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .module {
+      border: 1px solid var(--blueprint-line);
+      padding: 10px;
+      position: relative;
+    }
+
+    .module-id {
+      position: absolute;
+      top: -8px;
+      left: 10px;
+      background: var(--blueprint-bg);
+      padding: 0 6px;
+      font-size: 8px;
+      color: var(--blueprint-cyan);
+    }
+
+    .module-title {
+      font-size: 9px;
+      color: var(--dimension);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      margin-top: 4px;
+    }
+
+    .module-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tech-tag {
+      font-size: 8px;
+      padding: 3px 8px;
+      background: rgba(0, 102, 204, 0.2);
+      border: 1px solid var(--blueprint-line);
+      color: var(--blueprint-cyan);
+    }
+
+    .right-panel {
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .right-panel::before {
+      content: 'DETAIL VIEW';
+      position: absolute;
+      top: 50%;
+      right: -35px;
+      transform: rotate(90deg) translateX(-50%);
+      font-size: 10px;
+      color: var(--dimension);
+      letter-spacing: 4px;
+      transform-origin: center;
+    }
+
+    .section-view {
+      margin-bottom: 30px;
+      border: 2px solid var(--blueprint-line);
+      position: relative;
+      background: rgba(0, 45, 92, 0.3);
+    }
+
+    .view-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 15px;
+      background: var(--blueprint-paper);
+      border-bottom: 1px solid var(--blueprint-line);
+    }
+
+    .view-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--blueprint-cyan);
+      font-family: "Space Grotesk", sans-serif;
+      line-height: 1;
+    }
+
+    .view-title {
+      flex: 1;
+    }
+
+    .view-title-main {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--blueprint-white);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .view-title-sub {
+      font-size: 9px;
+      color: var(--dimension);
+      margin-top: 2px;
+    }
+
+    .view-scale {
+      font-size: 9px;
+      color: var(--blueprint-cyan);
+      border: 1px solid var(--blueprint-line);
+      padding: 4px 10px;
+    }
+
+    .exp-block {
+      padding: 15px;
+      border-bottom: 1px solid var(--blueprint-line);
+      position: relative;
+    }
+
+    .exp-block:last-child {
+      border-bottom: none;
+    }
+
+    .exp-block::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--blueprint-cyan);
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .exp-role {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blueprint-white);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .exp-company {
+      font-size: 10px;
+      color: var(--blueprint-cyan);
+      font-weight: 500;
+    }
+
+    .exp-date {
+      font-size: 9px;
+      color: var(--dimension);
+      border: 1px solid var(--blueprint-line);
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+
+    .exp-specs {
+      list-style: none;
+      padding-left: 15px;
+    }
+
+    .exp-specs li {
+      font-size: 10px;
+      color: var(--blueprint-white);
+      margin-bottom: 5px;
+      position: relative;
+      padding-left: 15px;
+      opacity: 0.9;
+    }
+
+    .exp-specs li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--blueprint-cyan);
+      font-weight: 700;
+    }
+
+    .cert-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .cert-row {
+      border-bottom: 1px dotted var(--blueprint-line);
+    }
+
+    .cert-row:last-child {
+      border-bottom: none;
+    }
+
+    .cert-cell {
+      padding: 10px;
+      font-size: 10px;
+    }
+
+    .cert-id {
+      color: var(--dimension);
+      font-size: 9px;
+      width: 80px;
+    }
+
+    .cert-name {
+      color: var(--blueprint-white);
+      font-weight: 500;
+    }
+
+    .cert-issuer {
+      color: var(--blueprint-cyan);
+      font-size: 9px;
+      text-align: right;
+    }
+
+    .drawing-notes {
+      position: absolute;
+      bottom: 30px;
+      left: 50px;
+      right: 50px;
+      border-top: 1px solid var(--blueprint-line);
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 8px;
+      color: var(--dimension);
+    }
+
+    .note-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .revision {
+      position: absolute;
+      bottom: 30px;
+      right: 50px;
+      border: 1px solid var(--blueprint-line);
+      padding: 8px 15px;
+      font-size: 9px;
+    }
+
+    .rev-label {
+      color: var(--dimension);
+      margin-bottom: 2px;
+    }
+
+    .rev-value {
+      color: var(--blueprint-cyan);
+      font-weight: 700;
+    }
+
+    .axis-marker {
+      position: absolute;
+      font-size: 8px;
+      color: var(--dimension);
+    }
+
+    .axis-x {
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .axis-y {
+      left: 25px;
+      top: 50%;
+      transform: rotate(-90deg) translateX(-50%);
+      transform-origin: left center;
+    }
+
+    .cut-line {
+      position: absolute;
+      border: 1px dashed var(--blueprint-cyan);
+      opacity: 0.3;
+    }
+
+    .cut-h {
+      left: 0;
+      right: 0;
+      height: 0;
+    }
+
+    .cut-top {
+      top: 100px;
+    }
+
+    .cut-bottom {
+      bottom: 100px;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--blueprint-bg);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        overflow: visible;
+      }
+
+      .screen-only {
+        display: none !important;
+      }
+
+      .print-only {
+        display: block !important;
+      }
+
+      .print-only .page {
+        width: 210mm;
+        min-height: 297mm;
+        height: 297mm;
+        margin: 0;
+        box-shadow: none;
+        overflow: hidden;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .print-only .page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      .print-only .blueprint-grid {
+        min-height: 297mm;
+        height: 297mm;
+        padding: 60px 50px 78px 50px;
+      }
+
+      .print-only .data-section {
+        margin-bottom: 16px;
+      }
+
+      .print-only .section-view {
+        margin-bottom: 16px;
+      }
+
+      .print-only .title-block {
+        margin-bottom: 18px;
+        padding: 18px;
+      }
+
+      .print-only .data-content {
+        padding: 10px;
+      }
+
+      .print-only .contact-node {
+        margin-bottom: 9px;
+        padding: 8px;
+      }
+
+      .print-only .component-item {
+        padding: 6px 0;
+      }
+
+      .print-only .module {
+        padding: 8px;
+      }
+
+      .print-only .view-header {
+        padding: 10px 12px;
+      }
+
+      .print-only .exp-block {
+        padding: 12px;
+      }
+
+      .print-only .exp-header {
+        margin-bottom: 7px;
+        gap: 10px;
+      }
+
+      .print-only .exp-role {
+        font-size: 10px;
+        line-height: 1.24;
+        margin-bottom: 3px;
+      }
+
+      .print-only .exp-company {
+        font-size: 9px;
+      }
+
+      .print-only .exp-date {
+        font-size: 8px;
+        padding: 3px 8px;
+      }
+
+      .print-only .exp-specs li {
+        font-size: 8.8px;
+        line-height: 1.28;
+        margin-bottom: 2px;
+      }
+
+      .print-only .cert-cell {
+        padding: 8px;
+        font-size: 9px;
+      }
+
+      .print-only .cert-id {
+        font-size: 8px;
+        width: 70px;
+      }
+
+      .print-only .cert-issuer {
+        font-size: 8px;
+      }
+
+      .print-only .drawing-notes {
+        left: 50px;
+        right: 180px;
+        bottom: 22px;
+        font-size: 7px;
+        padding-top: 7px;
+      }
+
+      .print-only .revision {
+        right: 50px;
+        bottom: 22px;
+        font-size: 8px;
+        padding: 6px 11px;
+        background: var(--blueprint-bg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SCREEN VERSION: BLEIBT UNVERÄNDERT -->
+  <div class="screen-only">
+    <div class="page">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <div class="dimension-line dim-h dim-top"></div>
+      <div class="dimension-line dim-h dim-bottom"></div>
+      <div class="dimension-line dim-v dim-left"></div>
+      <div class="dimension-line dim-v dim-right"></div>
+
+      <div class="spec-header">TECHNICAL SPECIFICATION SHEET</div>
+
+      <div class="axis-marker axis-x">X-AXIS: 210mm</div>
+      <div class="axis-marker axis-y">Y-AXIS: 297mm</div>
+
+      <div class="cut-line cut-h cut-top"></div>
+      <div class="cut-line cut-h cut-bottom"></div>
+
+      <div class="blueprint-grid">
+        <aside class="left-panel">
+          <div class="title-block">
+            <div class="blueprint-name">MICHAEL<br>SCHUBERT</div>
+            <div class="blueprint-id">◈ QA-ENGINEER</div>
+
+            <div class="spec-row">
+              <span class="spec-label">CLASS:</span>
+              <span class="spec-value">QUALITY ASSURANCE</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">TYPE:</span>
+              <span class="spec-value">QA ENGINEER</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">LOC:</span>
+              <span class="spec-value">BERLIN, DE</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">MODE:</span>
+              <span class="spec-value">100% REMOTE CAPABLE</span>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ COMMS ARRAY</div>
+            <div class="data-content">
+              <div class="contact-node" data-index="01">
+                <div class="node-icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="node-data">
+                  <div class="node-label">PRIMARY UPLINK</div>
+                  <div class="node-value">
+                    <a href="mailto:herr.michael.schubert@gmail.com">herr.michael.schubert@gmail.com</a>
+                  </div>
+                </div>
+              </div>
+              <div class="contact-node" data-index="02">
+                <div class="node-icon"><i class="fa-brands fa-linkedin"></i></div>
+                <div class="node-data">
+                  <div class="node-label">PROFESSIONAL NET</div>
+                  <div class="node-value">
+                    <a href="https://www.linkedin.com/in/michael-schubert-55548b198/"
+                      target="_blank">linkedin.com/in/michael-schubert</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ CORE MODULES</div>
+            <div class="data-content">
+              <ul class="component-list">
+                <li class="component-item">
+                  <span class="component-code">MOD-01</span>
+                  <span class="component-name">Manual Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-02</span>
+                  <span class="component-name">Regression Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-03</span>
+                  <span class="component-name">Functional Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-04</span>
+                  <span class="component-name">System Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-05</span>
+                  <span class="component-name">Test Case Design</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ SUBSYSTEMS</div>
+            <div class="data-content">
+              <div class="module-grid">
+                <div class="module">
+                  <span class="module-id">SYS-A1</span>
+                  <div class="module-title">Automation Layer</div>
+                  <div class="module-tags">
+                    <span class="tech-tag">SELENIUM</span>
+                    <span class="tech-tag">JUNIT</span>
+                    <span class="tech-tag">API</span>
+                    <span class="tech-tag">REST</span>
+                    <span class="tech-tag">SQL</span>
+                  </div>
+                </div>
+                <div class="module">
+                  <span class="module-id">SYS-D1</span>
+                  <div class="module-title">Debug Matrix</div>
+                  <div class="module-tags">
+                    <span class="tech-tag">BUG-REPRO</span>
+                    <span class="tech-tag">RCA</span>
+                    <span class="tech-tag">PROD-ANALYSIS</span>
+                  </div>
+                </div>
+                <div class="module">
+                  <span class="module-id">SYS-T1</span>
+                  <div class="module-title">Tool Stack</div>
+                  <div class="module-tags">
+                    <span class="tech-tag">JIRA</span>
+                    <span class="tech-tag">CONFLUENCE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ LANG PROTOCOLS</div>
+            <div class="data-content">
+              <div class="component-item">
+                <span class="component-code">DE</span>
+                <span class="component-name">German</span>
+                <span class="component-spec">NATIVE</span>
+              </div>
+              <div class="component-item">
+                <span class="component-code">EN</span>
+                <span class="component-name">English</span>
+                <span class="component-spec">FLUENT</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="right-panel">
+          <div class="section-view">
+            <div class="view-header">
+              <div class="view-number">01</div>
+              <div class="view-title">
+                <div class="view-title-main">System Overview</div>
+                <div class="view-title-sub">GENERAL SPECIFICATIONS & CAPABILITIES</div>
+              </div>
+              <div class="view-scale">1:1</div>
+            </div>
+            <div class="exp-block" style="border-left: none;">
+              <p style="font-size: 11px; line-height: 1.7; color: var(--blueprint-white); padding: 10px;">
+                Quality Assurance Engineer with <strong style="color: var(--blueprint-cyan);">8+ years</strong>
+                of experience ensuring reliability and performance of web and enterprise applications.
+                Specialized in manual testing, regression testing, defect analysis, and validation of complex
+                software systems across the full development lifecycle. Background in software development with
+                hands-on experience in Selenium-based test automation, API testing, and structured issue analysis.
+                Bridges the gap between development and quality assurance to deliver stable, reliable, and
+                high-quality products.
+              </p>
+              <div
+                style="display: flex; gap: 20px; padding: 15px; border-top: 1px dashed var(--blueprint-line); margin-top: 10px;">
+                <div style="text-align: center;">
+                  <div style="font-size: 24px; font-weight: 700; color: var(--blueprint-cyan);">8+</div>
+                  <div style="font-size: 8px; color: var(--dimension); text-transform: uppercase;">Years Active</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 24px; font-weight: 700; color: var(--blueprint-cyan);">6</div>
+                  <div style="font-size: 8px; color: var(--dimension); text-transform: uppercase;">Positions</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 24px; font-weight: 700; color: var(--blueprint-cyan);">1</div>
+                  <div style="font-size: 8px; color: var(--dimension); text-transform: uppercase;">Oracle Certs</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-view">
+            <div class="view-header">
+              <div class="view-number">02</div>
+              <div class="view-title">
+                <div class="view-title-main">Operational History</div>
+                <div class="view-title-sub">DEPLOYMENT TIMELINE & MISSION LOG</div>
+              </div>
+              <div class="view-scale">CHRONO</div>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Software Engineer</div>
+                  <div class="exp-role">(Quality Focus)</div>
+                  <div class="exp-company">◈ adesso SE, Berlin</div>
+                </div>
+                <div class="exp-date">06/2022 – 01/2025</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Ensured software quality in complex client projects</li>
+                <li>Reproduced and analyzed critical production issues</li>
+                <li>Conducted integration and system testing</li>
+                <li>Validated functional requirements before release</li>
+                <li>Improved stability of existing applications</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Software Engineer</div>
+                  <div class="exp-role">(Quality & System Analysis)</div>
+                  <div class="exp-company">◈ Das Büro am Draht, Berlin</div>
+                </div>
+                <div class="exp-date">09/2021 – 05/2022</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Analyzed and stabilized existing software systems</li>
+                <li>Identified defects and supported structured problem resolution</li>
+                <li>Assisted in functional testing and validation</li>
+                <li>Improved maintainability and reliability</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Software Developer</div>
+                  <div class="exp-role">(Testing & QA Focus)</div>
+                  <div class="exp-company">◈ ELO Digital Office GmbH, Stuttgart</div>
+                </div>
+                <div class="exp-date">08/2018 – 08/2021</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Created structured test cases</li>
+                <li>Executed regression test cycles</li>
+                <li>Investigated software defects</li>
+                <li>Validated new modules and features</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Junior Software Engineer</div>
+                  <div class="exp-company">◈ Wünsch AG, Stuttgart</div>
+                </div>
+                <div class="exp-date">03/2017 – 07/2018</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Ensured stability of software components</li>
+                <li>Performed API and interface validation</li>
+                <li>Collaborated with development teams</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">QA / Test Automation Engineer</div>
+                  <div class="exp-company">◈ CYBERTRAP, Berlin</div>
+                </div>
+                <div class="exp-date">08/2015 – 02/2016</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Developed automated tests using Selenium and JUnit (Java)</li>
+                <li>Designed and analyzed performance tests in Python</li>
+                <li>Investigated and reproduced complex software defects</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">1st Level Support</div>
+                  <div class="exp-company">◈ STRATO AG, Berlin</div>
+                </div>
+                <div class="exp-date">07/2014 – 05/2015</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Reproduced technical customer issues</li>
+                <li>Documented defects in ticketing systems</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="section-view">
+            <div class="view-header">
+              <div class="view-number">03</div>
+              <div class="view-title">
+                <div class="view-title-main">Certification Registry</div>
+                <div class="view-title-sub">ACCREDITED COMPETENCIES & STANDARDS</div>
+              </div>
+              <div class="view-scale">CERT</div>
+            </div>
+            <table class="cert-table">
+              <tr class="cert-row">
+                <td class="cert-cell cert-id">CERT-001</td>
+                <td class="cert-cell cert-name">Oracle Certified Associate (OCAJP) – Java SE 7</td>
+                <td class="cert-cell cert-issuer">Oracle Corp.</td>
+              </tr>
+
+              <tr class="cert-row">
+                <td class="cert-cell cert-id">CERT-002</td>
+                <td class="cert-cell cert-name">Java Programmer Certification</td>
+                <td class="cert-cell cert-issuer">Hamburger Akademie</td>
+              </tr>
+              <tr class="cert-row">
+                <td class="cert-cell cert-id">CERT-003</td>
+                <td class="cert-cell cert-name">IT Systems Electronics Technician</td>
+                <td class="cert-cell cert-issuer">—</td>
+              </tr>
+            </table>
+          </div>
+        </main>
+      </div>
+
+      <div class="drawing-notes">
+        <div class="note-item"><span>◈</span> ALL DIMENSIONS IN MM UNLESS NOTED</div>
+        <div class="note-item"><span>◈</span> TOLERANCES PER ISO 2768-M</div>
+        <div class="note-item"><span>◈</span> DOCUMENT CLASS: PUBLIC</div>
+      </div>
+
+      <div class="revision">
+        <div class="rev-label">REVISION</div>
+        <div class="rev-value">REV. A / 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT VERSION: 2 SEITEN -->
+  <div class="print-only">
+
+    <!-- PRINT PAGE 1 -->
+    <div class="page">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <div class="dimension-line dim-h dim-top"></div>
+      <div class="dimension-line dim-h dim-bottom"></div>
+      <div class="dimension-line dim-v dim-left"></div>
+      <div class="dimension-line dim-v dim-right"></div>
+
+      <div class="spec-header">TECHNICAL SPECIFICATION SHEET</div>
+
+      <div class="axis-marker axis-x">X-AXIS: 210mm</div>
+      <div class="axis-marker axis-y">Y-AXIS: 297mm</div>
+
+      <div class="cut-line cut-h cut-top"></div>
+      <div class="cut-line cut-h cut-bottom"></div>
+
+      <div class="blueprint-grid">
+        <aside class="left-panel">
+          <div class="title-block">
+            <div class="blueprint-name">MICHAEL<br>SCHUBERT</div>
+            <div class="blueprint-id">◈ QA-ENGINEER</div>
+
+            <div class="spec-row">
+              <span class="spec-label">CLASS:</span>
+              <span class="spec-value">QUALITY ASSURANCE</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">TYPE:</span>
+              <span class="spec-value">QA ENGINEER</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">LOC:</span>
+              <span class="spec-value">BERLIN, DE</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">MODE:</span>
+              <span class="spec-value">100% REMOTE CAPABLE</span>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ COMMS ARRAY</div>
+            <div class="data-content">
+              <div class="contact-node" data-index="01">
+                <div class="node-icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="node-data">
+                  <div class="node-label">PRIMARY UPLINK</div>
+                  <div class="node-value">
+                    <a href="mailto:herr.michael.schubert@gmail.com">herr.michael.schubert@gmail.com</a>
+                  </div>
+                </div>
+              </div>
+              <div class="contact-node" data-index="02">
+                <div class="node-icon"><i class="fa-brands fa-linkedin"></i></div>
+                <div class="node-data">
+                  <div class="node-label">PROFESSIONAL NET</div>
+                  <div class="node-value">
+                    <a href="https://www.linkedin.com/in/michael-schubert-55548b198/"
+                      target="_blank">linkedin.com/in/michael-schubert</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ CORE MODULES</div>
+            <div class="data-content">
+              <ul class="component-list">
+                <li class="component-item">
+                  <span class="component-code">MOD-01</span>
+                  <span class="component-name">Manual Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-02</span>
+                  <span class="component-name">Regression Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-03</span>
+                  <span class="component-name">Functional Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-04</span>
+                  <span class="component-name">System Testing</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+                <li class="component-item">
+                  <span class="component-code">MOD-05</span>
+                  <span class="component-name">Test Case Design</span>
+                  <span class="component-spec">v8.0+</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ SUBSYSTEMS</div>
+            <div class="data-content">
+              <div class="module-grid">
+                <div class="module">
+                  <span class="module-id">SYS-A1</span>
+                  <div class="module-title">Automation Layer</div>
+                  <div class="module-tags">
+                    <span class="tech-tag">SELENIUM</span>
+                    <span class="tech-tag">JUNIT</span>
+                    <span class="tech-tag">API</span>
+                    <span class="tech-tag">REST</span>
+                    <span class="tech-tag">SQL</span>
+                  </div>
+                </div>
+                <div class="module">
+                  <span class="module-id">SYS-D1</span>
+                  <div class="module-title">Debug Matrix</div>
+                  <div class="module-tags">
+                    <span class="tech-tag">BUG-REPRO</span>
+                    <span class="tech-tag">RCA</span>
+                    <span class="tech-tag">PROD-ANALYSIS</span>
+                  </div>
+                </div>
+                <div class="module">
+                  <span class="module-id">SYS-T1</span>
+                  <div class="module-title">Tool Stack</div>
+                  <div class="module-tags">
+                    <span class="tech-tag">JIRA</span>
+                    <span class="tech-tag">CONFLUENCE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="right-panel">
+          <div class="section-view">
+            <div class="view-header">
+              <div class="view-number">01</div>
+              <div class="view-title">
+                <div class="view-title-main">System Overview</div>
+                <div class="view-title-sub">GENERAL SPECIFICATIONS & CAPABILITIES</div>
+              </div>
+              <div class="view-scale">1:1</div>
+            </div>
+            <div class="exp-block" style="border-left: none;">
+              <p style="font-size: 10px; line-height: 1.55; color: var(--blueprint-white); padding: 8px;">
+                Quality Assurance Engineer with <strong style="color: var(--blueprint-cyan);">8+ years</strong>
+                of experience ensuring reliability and performance of web and enterprise applications.
+                Specialized in manual testing, regression testing, defect analysis, and validation of complex
+                software systems across the full development lifecycle. Background in software development with
+                hands-on experience in Selenium-based test automation, API testing, and structured issue analysis.
+                Bridges the gap between development and quality assurance to deliver stable, reliable, and
+                high-quality products.
+              </p>
+              <div
+                style="display: flex; gap: 18px; padding: 12px; border-top: 1px dashed var(--blueprint-line); margin-top: 8px;">
+                <div style="text-align: center;">
+                  <div style="font-size: 22px; font-weight: 700; color: var(--blueprint-cyan);">8+</div>
+                  <div style="font-size: 7px; color: var(--dimension); text-transform: uppercase;">Years Active</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 22px; font-weight: 700; color: var(--blueprint-cyan);">6</div>
+                  <div style="font-size: 7px; color: var(--dimension); text-transform: uppercase;">Positions</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 22px; font-weight: 700; color: var(--blueprint-cyan);">1</div>
+                  <div style="font-size: 7px; color: var(--dimension); text-transform: uppercase;">Oracle Certs</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-view">
+            <div class="view-header">
+              <div class="view-number">02</div>
+              <div class="view-title">
+                <div class="view-title-main">Operational History</div>
+                <div class="view-title-sub">DEPLOYMENT TIMELINE & MISSION LOG</div>
+              </div>
+              <div class="view-scale">CHRONO</div>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Software Engineer</div>
+                  <div class="exp-role">(Quality Focus)</div>
+                  <div class="exp-company">◈ adesso SE, Berlin</div>
+                </div>
+                <div class="exp-date">06/2022 – 01/2025</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Ensured software quality in complex client projects</li>
+                <li>Reproduced and analyzed critical production issues</li>
+                <li>Conducted integration and system testing</li>
+                <li>Validated functional requirements before release</li>
+                <li>Improved stability of existing applications</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Software Engineer</div>
+                  <div class="exp-role">(Quality & System Analysis)</div>
+                  <div class="exp-company">◈ Das Büro am Draht, Berlin</div>
+                </div>
+                <div class="exp-date">09/2021 – 05/2022</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Analyzed and stabilized existing software systems</li>
+                <li>Identified defects and supported structured problem resolution</li>
+                <li>Assisted in functional testing and validation</li>
+                <li>Improved maintainability and reliability</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Software Developer</div>
+                  <div class="exp-role">(Testing & QA Focus)</div>
+                  <div class="exp-company">◈ ELO Digital Office GmbH, Stuttgart</div>
+                </div>
+                <div class="exp-date">08/2018 – 08/2021</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Created structured test cases</li>
+                <li>Executed regression test cycles</li>
+                <li>Investigated software defects</li>
+                <li>Validated new modules and features</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">Junior Software Engineer</div>
+                  <div class="exp-company">◈ Wünsch AG, Stuttgart</div>
+                </div>
+                <div class="exp-date">03/2017 – 07/2018</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Ensured stability of software components</li>
+                <li>Performed API and interface validation</li>
+                <li>Collaborated with development teams</li>
+              </ul>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <div class="drawing-notes">
+        <div class="note-item"><span>◈</span> ALL DIMENSIONS IN MM UNLESS NOTED</div>
+        <div class="note-item"><span>◈</span> TOLERANCES PER ISO 2768-M</div>
+        <div class="note-item"><span>◈</span> DOCUMENT CLASS: PUBLIC</div>
+      </div>
+
+      <div class="revision">
+        <div class="rev-label">REVISION</div>
+        <div class="rev-value">REV. A / 2026</div>
+      </div>
+    </div>
+
+    <!-- PRINT PAGE 2 -->
+    <div class="page">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <div class="dimension-line dim-h dim-top"></div>
+      <div class="dimension-line dim-h dim-bottom"></div>
+      <div class="dimension-line dim-v dim-left"></div>
+      <div class="dimension-line dim-v dim-right"></div>
+
+      <div class="spec-header">TECHNICAL SPECIFICATION SHEET</div>
+
+      <div class="axis-marker axis-x">X-AXIS: 210mm</div>
+      <div class="axis-marker axis-y">Y-AXIS: 297mm</div>
+
+      <div class="cut-line cut-h cut-top"></div>
+      <div class="cut-line cut-h cut-bottom"></div>
+
+      <div class="blueprint-grid">
+        <aside class="left-panel">
+          <div class="title-block">
+            <div class="blueprint-name">MICHAEL<br>SCHUBERT</div>
+            <div class="blueprint-id">◈ QA-ENGINEER</div>
+
+            <div class="spec-row">
+              <span class="spec-label">CLASS:</span>
+              <span class="spec-value">QUALITY ASSURANCE</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">TYPE:</span>
+              <span class="spec-value">QA ENGINEER</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">LOC:</span>
+              <span class="spec-value">BERLIN, DE</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">MODE:</span>
+              <span class="spec-value">100% REMOTE CAPABLE</span>
+            </div>
+          </div>
+
+          <div class="data-section">
+            <div class="data-header">◈ LANG PROTOCOLS</div>
+            <div class="data-content">
+              <div class="component-item">
+                <span class="component-code">DE</span>
+                <span class="component-name">German</span>
+                <span class="component-spec">NATIVE</span>
+              </div>
+              <div class="component-item">
+                <span class="component-code">EN</span>
+                <span class="component-name">English</span>
+                <span class="component-spec">FLUENT</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="right-panel">
+          <div class="section-view">
+            <div class="view-header">
+              <div class="view-number">02</div>
+              <div class="view-title">
+                <div class="view-title-main">Operational History</div>
+                <div class="view-title-sub">DEPLOYMENT TIMELINE & MISSION LOG</div>
+              </div>
+              <div class="view-scale">CHRONO</div>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">QA / Test Automation Engineer</div>
+                  <div class="exp-company">◈ CYBERTRAP, Berlin</div>
+                </div>
+                <div class="exp-date">08/2015 – 02/2016</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Developed automated tests using Selenium and JUnit (Java)</li>
+                <li>Designed and analyzed performance tests in Python</li>
+                <li>Investigated and reproduced complex software defects</li>
+              </ul>
+            </div>
+
+            <div class="exp-block">
+              <div class="exp-header">
+                <div>
+                  <div class="exp-role">1st Level Support</div>
+                  <div class="exp-company">◈ STRATO AG, Berlin</div>
+                </div>
+                <div class="exp-date">07/2014 – 05/2015</div>
+              </div>
+              <ul class="exp-specs">
+                <li>Reproduced technical customer issues</li>
+                <li>Documented defects in ticketing systems</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="section-view">
+            <div class="view-header">
+              <div class="view-number">03</div>
+              <div class="view-title">
+                <div class="view-title-main">Certification Registry</div>
+                <div class="view-title-sub">ACCREDITED COMPETENCIES & STANDARDS</div>
+              </div>
+              <div class="view-scale">CERT</div>
+            </div>
+            <table class="cert-table">
+              <tr class="cert-row">
+                <td class="cert-cell cert-id">CERT-001</td>
+                <td class="cert-cell cert-name">Oracle Certified Associate (OCAJP) – Java SE 7</td>
+                <td class="cert-cell cert-issuer">Oracle Corp.</td>
+              </tr>
+
+              <tr class="cert-row">
+                <td class="cert-cell cert-id">CERT-002</td>
+                <td class="cert-cell cert-name">Java Programmer Certification</td>
+                <td class="cert-cell cert-issuer">Hamburger Akademie</td>
+              </tr>
+              <tr class="cert-row">
+                <td class="cert-cell cert-id">CERT-003</td>
+                <td class="cert-cell cert-name">IT Systems Electronics Technician</td>
+                <td class="cert-cell cert-issuer">—</td>
+              </tr>
+            </table>
+          </div>
+        </main>
+      </div>
+
+      <div class="drawing-notes">
+        <div class="note-item"><span>◈</span> ALL DIMENSIONS IN MM UNLESS NOTED</div>
+        <div class="note-item"><span>◈</span> TOLERANCES PER ISO 2768-M</div>
+        <div class="note-item"><span>◈</span> DOCUMENT CLASS: PUBLIC</div>
+      </div>
+
+      <div class="revision">
+        <div class="rev-label">REVISION</div>
+        <div class="rev-value">REV. A / 2026</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>
